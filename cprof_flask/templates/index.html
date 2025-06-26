@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Composition Profiler</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/profiler.css') }}" type="text/css">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.gif') }}">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    </head>
+    <body>
+        <table width="1000" cellpadding="0" cellspacing="6" border="0" align="center">
+        <tr>
+        <td align="left" valign="bottom">
+            <img src="{{ url_for('static', filename='images/cprof.gif') }}" width="167" height="41" border="0" alt="Composition Profiler logo" hspace="10" vspace="0">
+        </td>
+        <td align="right" valign="bottom">
+            Home |
+            <a href="/cprofiler">Run Profiler</a> | 
+            <a href="/examples.html">Examples</a> |
+            <a href="/help.html">Help</a>
+        </td>
+        </tr>
+        <tr>
+        <td colspan="2"><br>
+
+<p> Composition Profiler is a tool for semi-automatic discovery of
+enrichment or depletion of amino acids, either individually or grouped
+by their <a href="help.html#order">physico-chemical or structural 
+properties</a>, such as aromaticity, charge, polarity, hydrophobicity, 
+flexibility, surface exposure, solvation potential, interface propensity,
+normalized frequency of occurrence in α helices, β structures, and coils,
+linker and disorder propensities, size and bulkiness. </p>
+
+<p> The program takes two samples of amino acids as input: a query sample
+and a reference sample. The latter provides a suitable background amino
+acid distribution, and should be chosen according to the nature of the
+query sample, for example, a standard protein database (e.g. SwissProt,
+PDB Select 25, DisProt, or surface residues of monomeric proteins), 
+a representative sample of proteins from the organism under study, or a 
+group of proteins with a contrasting functional annotation.
+The results of the analysis of amino acid composition differences are
+summarized in textual and graphical form. </p>
+
+<p> The graphical output is a bar chart composed of twenty
+data points (one for each amino acid), where bar heights indicate
+enrichment or depletion. The output is designed to assist the discovery
+of statistically significant composition anomalies by color-coding and
+sorting residues according to their physico-chemical properties. For
+example, if the property being tested is flexibility, the tool will
+group rigid amino acids on the left hand side of the plot and flexible
+amino acids on the right hand side of the plot. </p> 
+
+<p> As an exploratory data mining tool, our software can be used to guide
+feature selection for protein function or structure predictors. For
+classes of proteins with significant differences in frequencies of
+amino acids having particular physico-chemical (e.g. hydrophobicity or
+charge) or structural (e.g. alpha helix propensity) properties,
+Composition Profiler can be used as a rough, light-weight visual
+classifier. </p>
+
+
+<h4>Acknowledgements</h4>
+
+<p>
+Composition Profiler software was developed by
+<a href="http://alumni.cs.ucr.edu/~vladimir">Vladimir Vacic</a> and 
+<a href="http://www.cs.ucr.edu/~stelo">Stefano Lonardi</a>
+(University of California, Riverside), and 
+Vladimir N. Uversky
+and A. Keith Dunker
+(Indiana University School of Medicine, Indianapolis).  
+</p>
+
+<p>
+In citing Composition Profiler, please refer to:
+
+<blockquote>
+Vacic V, Uversky VN, Dunker AK, Lonardi S. (2007)
+"Composition Profiler: A tool for discovery and visualization of amino
+ acid composition differences." <u>BMC Bioinformatics</u>. 8:211. <a
+ href="https://pubmed.ncbi.nlm.nih.gov/17578581/">
+<img src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+ height="15" border="0"></a>
+</blockquote>
+</p>
+
+<p> Composition Profiler was rewritten from scratch in python, using 
+numpy for sampling and statistical computation, and flask for the web
+front end. This greatly simplified the codebase and made installation a
+breeze. </p>
+
+<p> (The original version was written in ruby with some routines written
+in C and using numerical approximation functions from the Stephen L.
+Moshier's <a href="http://www.netlib.org/cephes">Cephes Math Library</a>).
+</p>
+
+<p> Also, computers became much faster since 2007, making bootstrap and
+permutation sampling an efficient way to approximate non-anaytical 
+distributions (and more accurate to boot). </p>
+
+<p> What a difference 18 years make. </p>
+
+
+<h4>Source Code</h4>
+
+<p>
+Composition Profiler source code is available on GitHub 
+<a href="https://github.com/vvaccicc/cprofiler">https://github.com/vvaccicc/cprofiler</a>.
+</p>
+
+        <hr noshade size="3">
+
+        </td>
+        </tr>
+        </table>
+    </body>
+</html>

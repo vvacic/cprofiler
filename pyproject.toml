@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cprofiler"
+version = "2.0.0"
+authors = [
+  { name="Vladimir Vacic", email="vvacic@gmail.com" },
+]
+description = "Composition Profiler: a tool for discovery and visualization of amino acid composition differences"
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.6"
+dependencies = []
+
+[project.urls]
+Homepage = "https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-8-211"
+
+[project.scripts]
+cprof = "cprofiler.main:main"
+
+[tool.setuptools]
+packages = ["cprofiler"]
+
+[tool.setuptools.package-data]
+"cprofiler.data" = [
+    "alpha_morf.fa",
+    "disprot_3.4.fa",
+    "heterodimers.fa",
+    "homodimers.fa",
+    "hubs.fa",
+    "monomers.fa",
+    "pdb_s25.fa",
+    "sprot51_5k.fa"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"

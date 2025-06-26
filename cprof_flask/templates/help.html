@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Composition Profiler - Help</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/profiler.css') }}" type="text/css">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.gif') }}">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    </head>
+    <body>
+        <table width="1000" cellpadding="0" cellspacing="6" border="0" align="center">
+        <tr>
+        <td align="left" valign="bottom">
+            <img src="{{ url_for('static', filename='images/cprof.gif') }}" width="167" height="41" border="0" alt="Composition Profiler logo" hspace="10" vspace="0">
+        </td>
+        <td align="right" valign="bottom">
+<a href="/index.html">Home</a> |
+<a href="/cprofiler">Run Profiler</a> |
+<a href="/examples.html">Examples</a> |
+Help</td>
+        </tr>
+        <tr>
+        <td colspan="2">
+
+<h4>Options</h4>
+
+<a name="sample"></a><h3>Query and background samples</h3> <p>
+Composition Profiler provides an easy way to visually investigate bias
+in amino acid composition between two sets of protein sequences. A set
+of proteins under study (the <b>query sample</b>) can be analyzed
+against a representative sample of proteins from the organism under
+study, or a group of proteins with a contrasting functional annotation
+(the <b>background sample</b>), which provides a suitable background
+amino acid distribution. </p>
+
+<p> Sequences should be entered in <a
+href="https://blast.ncbi.nlm.nih.gov/doc/blast-topics">FastA</a>
+format. </p>
+
+<p> There are no theoretical limits on the number of sequences that can
+be given as input.  Composition Profiler treats differences in amino
+acids composition as "signals" – since the p-value is a function of the
+sample size and signal strength, samples which are not large enough for
+the inherent signal will give differences with p-value above the
+statistical significance threshold, and will be discarded as spurious.
+With small sample sizes, only the strongest signals will be identified.
+</p>
+
+<p> For example, if a sample consisting of only one sequence,
+AAAAAAAAAA, were to be analyzed against SwissProt, because the
+difference between 100% A in the sample and 7.89% A in SwissProt
+presents a very strong signal (12 fold enrichment), the difference will
+be statistically significant. Larger sample size allows identification
+of more subtle signals. </p>
+
+
+<a name="distribution"></a><h3>Background distribution</h3>
+
+<p> Alternatively, the query sample can be analyzed against one of the
+standard protein datasets: 
+
+<ul> <li>SwissProt 51 (Bairoch et al., 2005), closest to the
+distribution of amino acids in nature among the four datasets</li>
+
+<li>PDB Select 25 (Berman et al, 2000), a subset of structures from the
+Protein Data Bank with less than 25% sequence identity, biased towards
+the composition of proteins amenable to crystallization studies</li> 
+
+<li>Surface residues determined by the Molecular Surface Package over a
+sample of  PDB structures of monomeric proteins, suitable for analyzing
+phenomena on protein surfaces, such as binding</li> 
+
+<li>DisProt 3.4, comprised of a set of consensus sequences of
+experimentally determined disordered regions (Sickmeier et al., 2007)
+</li> </ul>
+
+<p> To illustrate the importance of choosing an appropriate background
+distribution, we generated composition profiles of (A) PDBS25,
+(B) surface residues dataset and (C) DisProt against SwissProt:  </p>
+
+<center> <img src="{{ url_for
+('static', filename='images/backdist.png') }}" width="514"
+height="963"> </center>
+
+<p> All three graphs have the same y-axis scale, the same order of amino
+acids and the same color-coding scheme (Vihinen flexibility), which
+allows direct visual comparison of the amino acid biases in the three
+datasets. </p>
+
+
+<h4>Discovery</h4>
+
+<a name="alpha_value"></a><h3>Alpha value</h3>
+
+<p> Statistical significance of an observed enrichment or depletion is
+estimated using permutations. Concatenation of query and backround 
+sequences is randomly permuted and a test statistic more extreme than
+the one observed in the actual data is counted towards the pvalue. <p>
+
+<p> Any particular enrichment or depletion is statistically significant
+when the P-value is lower than or equal to a user-specified statistical
+significance (alpha) value. </p>
+
+
+<a name="bonferroni"></a><h3>Bonferroni correction</h3>
+
+<p> Simple multiple testing correction. Assumes independence of tests,
+and divides the alpha value by the total number of tests. See 
+(Weisstein) for <a
+href="http://mathworld.wolfram.com/BonferroniCorrection.html">
+details</a>. </p>
+
+
+<a name="iterations"></a><h3>Number of iterations</h3>
+
+<p> In the context of calculating composition differences, bootstrapping
+is used for non-parametric estimation of the confidence intervals for
+reported amino acid compositions. More precisely, reported confidence
+intervals are standard deviations of pseudo-replicate compositions. </p>
+
+<p> In the context of discovery and relative entropy calculations,
+permutations are used to estimate the statistical significance of the 
+observed test statistic (fractional difference or relative entropy). In
+each iteration, a random permutation of the two starting samples
+is created, the test statistic is computed based on the permuted sample
+and permutation test statistic more extreme than the observed test 
+statistic is coutned towards the P-value. </p>
+
+
+<a name="order"></a><a name="color"></a><h4>Amino acid grouping, ordering and color-coding</h4>
+
+<h3>Alpha helix frequency (Nagano, 1973)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">Y</td><td width="40">P</td><td width="40">G</td>
+<td width="40">N</td><td width="40">S</td><td width="40">R</td>
+<td width="40">T</td><td width="40">C</td><td width="40">I</td>
+<td width="40">V</td><td width="40">D</td><td width="40">W</td>
+<td width="40">Q</td><td width="40">L</td><td width="40">K</td>
+<td width="40">M</td><td width="40">F</td><td width="40">A</td>
+<td width="40">H</td><td width="40">E</td>
+</tr>
+<tr align="center">
+<td>0.63</td><td>0.70</td><td>0.72</td>
+<td>0.77</td><td>0.78</td><td>0.83</td>
+<td>0.87</td><td>0.94</td><td>0.94</td>
+<td>0.97</td><td>1.00</td><td>1.06</td>
+<td>1.10</td><td>1.23</td><td>1.23</td>
+<td>1.23</td><td>1.23</td><td>1.29</td>
+<td>1.29</td><td>1.54</td>
+</tr>
+<tr><td colspan="13" bgcolor="blue">&nbsp;</td><td colspan="7" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Aromatics</h3>
+
+<p>
+Aromatic amino acids (<font color="green">F, W, Y</font>) are colored 
+<font color="green">green</font>, and the remaining amino acids are 
+colored <font color="black">black</font>.
+</p>
+
+
+<h3>Beta structure frequency (Nagano, 1973)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">E</td><td width="40">R</td><td width="40">N</td>
+<td width="40">P</td><td width="40">S</td><td width="40">K</td>
+<td width="40">H</td><td width="40">D</td><td width="40">G</td>
+<td width="40">A</td><td width="40">Y</td><td width="40">C</td>
+<td width="40">W</td><td width="40">Q</td><td width="40">T</td>
+<td width="40">L</td><td width="40">M</td><td width="40">F</td>
+<td width="40">V</td><td width="40">I</td>
+</tr>
+<tr align="center">
+<td>0.33</td><td>0.67</td><td>0.72</td>
+<td>0.75</td><td>0.77</td><td>0.81</td>
+<td>0.87</td><td>0.9</td><td>0.9</td>
+<td>0.96</td><td>1.07</td><td>1.13</td>
+<td>1.13</td><td>1.18</td><td>1.23</td>
+<td>1.26</td><td>1.29</td><td>1.37</td>
+<td>1.41</td><td>1.54</td>
+</tr>
+<tr><td colspan="10" bgcolor="blue">&nbsp;</td><td colspan="10" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Bulkiness (Zimmerman <i>et al.</i>, 1968)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">G</td><td width="40">S</td><td width="40">A</td>
+<td width="40">D</td><td width="40">N</td><td width="40">C</td>
+<td width="40">E</td><td width="40">H</td><td width="40">R</td>
+<td width="40">Q</td><td width="40">K</td><td width="40">T</td>
+<td width="40">M</td><td width="40">P</td><td width="40">Y</td>
+<td width="40">F</td><td width="40">I</td><td width="40">L</td>
+<td width="40">V</td><td width="40">W</td>
+</tr>
+<tr align="center">
+<td>3.4</td><td>9.47</td><td>11.5</td>
+<td>11.68</td><td>12.82</td><td>13.46</td>
+<td>13.57</td><td>13.69</td><td>14.28</td>
+<td>14.45</td><td>15.71</td><td>15.77</td>
+<td>16.25</td><td>17.43</td><td>18.03</td>
+<td>19.8</td><td>21.4</td><td>21.4</td>
+<td>21.57</td><td>21.67</td>
+</tr>
+<tr><td colspan="16" bgcolor="blue">&nbsp;</td><td colspan="4" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Charge</h3>
+
+<p>
+Positively charged residues (<font color="blue">K, R</font>) are 
+colored <font color="blue">blue</font>, negatively charged residues 
+(<font color="red">D, E</font>) are colored <font color="red">red</font>; 
+and neutral residues are colored <font color="black">black</font>. 
+</p>
+
+
+<h3>Coil propensity (Nagano, 1973)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">F</td><td width="40">M</td><td width="40">L</td>
+<td width="40">A</td><td width="40">E</td><td width="40">H</td>
+<td width="40">I</td><td width="40">Q</td><td width="40">V</td>
+<td width="40">K</td><td width="40">W</td><td width="40">C</td>
+<td width="40">T</td><td width="40">D</td><td width="40">R</td>
+<td width="40">S</td><td width="40">G</td><td width="40">Y</td>
+<td width="40">N</td><td width="40">P</td>
+</tr>
+<tr align="center">
+<td>0.58</td><td>0.62</td><td>0.63</td>
+<td>0.72</td><td>0.75</td><td>0.76</td>
+<td>0.8</td><td>0.81</td><td>0.83</td>
+<td>0.84</td><td>0.87</td><td>1.01</td>
+<td>1.03</td><td>1.04</td><td>1.33</td>
+<td>1.34</td><td>1.35</td><td>1.35</td>
+<td>1.38</td><td>1.43</td>
+</tr>
+<tr><td colspan="11" bgcolor="blue">&nbsp;</td><td colspan="9" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Disorder propensity (Dunker <i>et al.</i>, 2001)</h3>
+
+<p>
+Disorder-promoting residues (<font color="red">A, R, S, Q, E, G, K, P
+</font>) are colored <font color="red">red</font>, order-promoting 
+residues (<font color="blue">N, C, I, L, F, W, Y, V</font>) are colored 
+<font color="blue">blue</font>, and disorder-order neutral residues 
+(<font color="black">D, H, M, T</font>) are colored 
+<font color="black">black</font>. 
+</p>
+
+
+<h3>Flexibility (Vihinen <i>et al.</i>, 1994)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">W</td><td width="40">C</td><td width="40">F</td>
+<td width="40">I</td><td width="40">Y</td><td width="40">V</td>
+<td width="40">L</td><td width="40">H</td><td width="40">M</td>
+<td width="40">A</td><td width="40">T</td><td width="40">R</td>
+<td width="40">G</td><td width="40">Q</td><td width="40">S</td>
+<td width="40">N</td><td width="40">P</td><td width="40">D</td>
+<td width="40">E</td><td width="40">K</td>
+</tr>
+<tr align="center">
+<td>0.904</td><td>0.906</td><td>0.915</td>
+<td>0.927</td><td>0.929</td><td>0.931</td>
+<td>0.935</td><td>0.950</td><td>0.952</td>
+<td>0.984</td><td>0.997</td><td>1.008</td>
+<td>1.031</td><td>1.037</td><td>1.046</td>
+<td>1.048</td><td>1.049</td><td>1.068</td>
+<td>1.094</td><td>1.102</td>
+</tr>
+<tr><td colspan="11" bgcolor="green">&nbsp;</td><td colspan="9" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Hydrophobicity (Eisenberg <i>et al.</i>, 1984)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">R</td><td width="40">K</td><td width="40">D</td>
+<td width="40">Q</td><td width="40">N</td><td width="40">E</td>
+<td width="40">H</td><td width="40">S</td><td width="40">T</td>
+<td width="40">P</td><td width="40">Y</td><td width="40">C</td>
+<td width="40">G</td><td width="40">A</td><td width="40">M</td>
+<td width="40">W</td><td width="40">L</td><td width="40">V</td>
+<td width="40">F</td><td width="40">I</td>
+</tr>
+<tr align="center">
+<td>-2.53</td><td>-1.5</td><td>-0.9</td>
+<td>-0.85</td><td>-0.78</td><td>-0.74</td>
+<td>-0.4</td><td>-0.18</td><td>-0.05</td>
+<td>0.12</td><td>0.26</td><td>0.29</td>
+<td>0.48</td><td>0.62</td><td>0.64</td>
+<td>0.81</td><td>1.06</td><td>1.08</td>
+<td>1.19</td><td>1.38</td>
+</tr>
+<tr><td colspan="9" bgcolor="cyan">&nbsp;</td><td colspan="11" bgcolor="black">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Hydrophobicity (Kyte and Doolittle, 1982)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">R</td><td width="40">K</td><td width="40">D</td>
+<td width="40">E</td><td width="40">N</td><td width="40">Q</td>
+<td width="40">H</td><td width="40">P</td><td width="40">Y</td>
+<td width="40">W</td><td width="40">S</td><td width="40">T</td>
+<td width="40">G</td><td width="40">A</td><td width="40">M</td>
+<td width="40">C</td><td width="40">F</td><td width="40">L</td>
+<td width="40">V</td><td width="40">I</td>
+</tr>
+<tr align="center">
+<td>-4.5</td><td>-3.9</td><td>-3.5</td><td>-3.5</td>
+<td>-3.5</td><td>-3.5</td><td>-3.2</td><td>-1.6</td>
+<td>-1.3</td><td>-0.9</td><td>-0.8</td><td>-0.7</td>
+<td>-0.4</td><td>1.8</td><td>1.9</td><td>2.5</td>
+<td>2.8</td><td>3.8</td><td>4.2</td><td>4.5</td>
+</tr>
+<tr><td colspan="13" bgcolor="cyan">&nbsp;</td><td colspan="7" bgcolor="black">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Hydrophobicity (Fauchere and Pliska, 1983)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">R</td><td width="40">K</td><td width="40">D</td>
+<td width="40">E</td><td width="40">N</td><td width="40">Q</td>
+<td width="40">S</td><td width="40">G</td><td width="40">H</td>
+<td width="40">T</td><td width="40">A</td><td width="40">P</td>
+<td width="40">Y</td><td width="40">V</td><td width="40">C</td>
+<td width="40">L</td><td width="40">F</td><td width="40">I</td>
+<td width="40">M</td><td width="40">W</td>
+</tr>
+<tr align="center">
+<td>-1.01</td><td>-0.99</td><td>-0.77</td>
+<td>-0.64</td><td>-0.6</td><td>-0.22</td>
+<td>-0.04</td><td>0.0</td><td>0.13</td>
+<td>0.26</td><td>0.31</td><td>0.72</td>
+<td>0.96</td><td>1.22</td><td>1.54</td>
+<td>1.7</td><td>1.79</td><td>1.8</td>
+<td>1.23</td><td>2.25</td>
+</tr>
+<tr><td colspan="8" bgcolor="cyan">&nbsp;</td><td colspan="12" bgcolor="black">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Interface propensity (Jones and Thornton, 1997)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">D</td><td width="40">K</td><td width="40">S</td>
+<td width="40">P</td><td width="40">T</td><td width="40">A</td>
+<td width="40">E</td><td width="40">Q</td><td width="40">G</td>
+<td width="40">N</td><td width="40">R</td><td width="40">V</td>
+<td width="40">L</td><td width="40">H</td><td width="40">C</td>
+<td width="40">I</td><td width="40">M</td><td width="40">Y</td>
+<td width="40">F</td><td width="40">W</td>
+</tr>
+<tr align="center">
+<td>-0.38</td><td>-0.36</td><td>-0.33</td>
+<td>-0.25</td><td>-0.18</td><td>-0.17</td>
+<td>-0.13</td><td>-0.11</td><td>-0.07</td>
+<td>0.12</td><td>0.27</td><td>0.27</td>
+<td>0.4</td><td>0.41</td><td>0.43</td>
+<td>0.44</td><td>0.66</td><td>0.66</td>
+<td>0.82</td><td>0.83</td></tr>
+<tr><td colspan="9" bgcolor="cyan">&nbsp;</td><td colspan="11" bgcolor="magenta">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Linker propensity (George and Heringa, 2003)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">C</td><td width="40">G</td><td width="40">W</td>
+<td width="40">D</td><td width="40">I</td><td width="40">N</td>
+<td width="40">K</td><td width="40">S</td><td width="40">V</td>
+<td width="40">A</td><td width="40">Y</td><td width="40">H</td>
+<td width="40">T</td><td width="40">M</td><td width="40">Q</td>
+<td width="40">E</td><td width="40">L</td><td width="40">F</td>
+<td width="40">R</td><td width="40">P</td>
+</tr>
+<tr align="center">
+<td>0.778</td><td>0.835</td><td>0.895</td>
+<td>0.916</td><td>0.922</td><td>0.944</td>
+<td>0.944</td><td>0.947</td><td>0.955</td>
+<td>0.964</td><td>1.0</td><td>1.014</td>
+<td>1.017</td><td>1.032</td><td>1.047</td>
+<td>1.051</td><td>1.085</td><td>1.119</td>
+<td>1.143</td><td>1.299</td>
+</tr>
+<tr><td colspan="10" bgcolor="blue">&nbsp;</td><td colspan="10" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Polarity (Zimmerman <i>et al.</i>, 1968)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">A</td><td width="40">G</td><td width="40">I</td>
+<td width="40">L</td><td width="40">V</td><td width="40">F</td>
+<td width="40">M</td><td width="40">C</td><td width="40">P</td>
+<td width="40">Y</td><td width="40">T</td><td width="40">S</td>
+<td width="40">W</td><td width="40">N</td><td width="40">Q</td>
+<td width="40">K</td><td width="40">D</td><td width="40">E</td>
+<td width="40">H</td><td width="40">R</td>
+</tr>
+<tr align="center">
+<td>0.0</td><td>0.0</td><td>0.13</td>
+<td>0.13</td><td>0.13</td><td>0.35</td>
+<td>1.43</td><td>1.48</td><td>1.58</td>
+<td>1.61</td><td>1.66</td><td>1.67</td>
+<td>2.1</td><td>3.38</td><td>3.53</td>
+<td>49.5</td><td>49.7</td><td>49.9</td>
+<td>51.6</td><td>52.0</td>
+</tr>
+<tr><td colspan="15" bgcolor="blue">&nbsp;</td><td colspan="5" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Size (Dawson, 1972)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">G</td><td width="40">A</td><td width="40">D</td>
+<td width="40">C</td><td width="40">S</td><td width="40">N</td>
+<td width="40">E</td><td width="40">T</td><td width="40">V</td>
+<td width="40">I</td><td width="40">L</td><td width="40">P</td>
+<td width="40">Q</td><td width="40">H</td><td width="40">M</td>
+<td width="40">F</td><td width="40">K</td><td width="40">W</td>
+<td width="40">Y</td><td width="40">R</td>
+</tr>
+<tr align="center">
+<td>0.5</td><td>2.5</td><td>2.5</td>
+<td>3.0</td><td>3.0</td><td>5.0</td>
+<td>5.0</td><td>5.0</td><td>5.0</td>
+<td>5.5</td><td>5.5</td><td>5.5</td>
+<td>6.0</td><td>6.0</td><td>6.0</td>
+<td>6.5</td><td>7.0</td><td>7.0</td>
+<td>7.0</td><td>7.5</td>
+</tr>
+<tr><td colspan="5" bgcolor="blue">&nbsp;</td><td colspan="15" bgcolor="red">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Surface exposure (Janin, 1979)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">K</td><td width="40">R</td><td width="40">E</td>
+<td width="40">Q</td><td width="40">D</td><td width="40">N</td>
+<td width="40">Y</td><td width="40">P</td><td width="40">T</td>
+<td width="40">H</td><td width="40">S</td><td width="40">A</td>
+<td width="40">G</td><td width="40">W</td><td width="40">M</td>
+<td width="40">L</td><td width="40">F</td><td width="40">V</td>
+<td width="40">I</td><td width="40">C</td>
+</tr>
+<tr align="center">
+<td>-1.8</td><td>-1.4</td><td>-0.7</td>
+<td>-0.7</td><td>-0.6</td><td>-0.5</td>
+<td>-0.4</td><td>-0.3</td><td>-0.2</td>
+<td>-0.1</td><td>-0.1</td><td>0.3</td>
+<td>0.3</td><td>0.3</td><td>0.4</td>
+<td>0.5</td><td>0.5</td><td>0.6</td>
+<td>0.7</td><td>0.9</td></tr>
+<tr><td colspan="11" bgcolor="orange">&nbsp;</td><td colspan="9" bgcolor="black">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Solvation potential (Jones and Thornton, 1996)</h3>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr align="center">
+<td width="40">W</td><td width="40">F</td><td width="40">I</td>
+<td width="40">L</td><td width="40">M</td><td width="40">Y</td>
+<td width="40">V</td><td width="40">C</td><td width="40">H</td>
+<td width="40">A</td><td width="40">G</td><td width="40">S</td>
+<td width="40">T</td><td width="40">P</td><td width="40">N</td>
+<td width="40">R</td><td width="40">Q</td><td width="40">D</td>
+<td width="40">E</td><td width="40">K</td>
+</tr>
+<tr align="center">
+<td>-0.68</td><td>-0.55</td><td>-0.49</td>
+<td>-0.49</td><td>-0.40</td><td>-0.32</td>
+<td>-0.31</td><td>-0.30</td><td>-0.06</td>
+<td>0.05</td><td>0.08</td><td>0.15</td>
+<td>0.16</td><td>0.19</td><td>0.22</td>
+<td>0.41</td><td>0.45</td><td>0.64</td>
+<td>0.77</td><td>1.61</td></tr>
+<tr><td colspan="9" bgcolor="cyan">&nbsp;</td><td colspan="11" bgcolor="magenta">&nbsp;</td></tr>
+</table>
+</blockquote>
+
+
+<h4>Additional color schemes</h4>
+
+<h3>WebLogo default colors</h3>
+
+<blockquote>
+<table width="400" cellpadding=2 cellspacing=0 border=1>
+<tr><td width="100">Amino Acid</td>
+<td width="100">Color Name</td>
+<td width="100">RGB</td>
+<td width="100">Hexadecimal</td></tr>
+
+<tr><td width="100"><font color="#00CC00"><b>G, S, T, Y, C</b></td>
+<td width="100"><font color="#00CC00"><b>green</b></td>
+<td width="100"><TT>[0,204,0]</TT></td>
+<td width="100">00CC00</td></tr>
+
+<tr><td width="100"><font color="#CC00CC"><b>N, Q</b></td>
+<td width="100"><font color="#CC00CC"><b>purple</b></td>
+<td width=100><TT>[204,0,204]</TT></td>
+<td width="100">CC00CC</td></tr>
+
+<tr><td width="100"><font color="#0000CC"><b>K, R, H</b></td>
+<td width="100"><font color="#0000CC"><b>blue</b></td>
+<td width="100"><TT>[0,204,0]</TT></td>
+<td width="100">0000CC</td></tr>
+
+<tr><td width="100"><font color="#CC0000"><b>D, E</b></td>
+<td width="100"><font color="#CC0000"><b>red</b></td>
+<td width="100"><TT>[204,0,0]</TT></td>
+<td width="100">CC0000</td></tr>
+
+<tr><td width="100"><font color="#000000"><b>P,A,W,F,L,I,M,V</b></td>
+<td width="100"><font color="#000000"><b>black</b></td>
+<td width="100"><TT>[0,0,0]</TT></td>
+<td width="100">000000</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Amino Colors</h3>
+
+<blockquote>
+<table width="400" cellpadding=2 cellspacing=0 border=1>
+<tr><td width="100">Amino Acid</td>
+<td width="100">Color Name</td>
+<td width="100">RGB</td>
+<td width="100">Hexadecimal</td></tr>
+
+<tr><td width="100"><font color="#E60A0A"><b>D, E</b></td>
+<td width="100"><font color="#E60A0A"><b>bright red</b></td>
+<td width="100"><TT>[230,10,10]</TT></td>
+<td width="100">E60A0A</td></tr>
+
+<tr><td width="100"><font color="#E6E600"><b>C, M</b></td>
+<td width="100"><font color="#E6E600"><b>yellow</b></td>
+<td width=100><TT>[230,230,0]</TT></td>
+<td width="100">E6E600</td></tr>
+
+<tr><td width="100"><font color="#145AFF"><b>K, R</b></td>
+<td width="100"><font color="#145AFF"><b>blue</b></td>
+<td width="100"><TT>[20,90,255]</TT></td>
+<td width="100">145AFF</td></tr>
+
+<tr><td width="100"><font color="#FA9600"><b>S, T</b></td>
+<td width="100"><font color="#FA9600"><b>orange</b></td>
+<td width="100"><TT>[250,150,0]</TT></td>
+<td width="100">FA9600</td></tr>
+
+<tr><td width="100"><font color="#3232AA"><b>F, Y</b></td>
+<td width="100"><font color="#3232AA"><b>mid blue</b></td>
+<td width="100"><TT>[50,50,170]</TT></td>
+<td width="100">3232AA</td></tr>
+
+<tr><td width="100"><font color="#00DCDC"><b>N, Q</b></td>
+<td width="100"><font color="#00DCDC"><b>cyan</b></td>
+<td width="100"><TT>[0,220,220]</TT></td>
+<td width="100">00DCDC</td></tr>
+
+<tr><td width="100"><font color="#EBEBEB"><b>G</b></td>
+<td width="100"><font color="#EBEBEB"><b>light grey</b></td>
+<td width="100"><TT>[235,235,235]</TT></td>
+<td width="100">EBEBEB</td></tr>
+
+<tr><td width="100"><font color="#0F820F"><b>L, V, I</b></td>
+<td width="100"><font color="#0F820F"><b>green</b></td>
+<td width="100"><TT>[15,130,15]</TT></td>
+<td width="100">0F820F</td></tr>
+
+<tr><td width="100"><font color="#C8C8C8"><b>A</b></td>
+<td width="100"><font color="#C8C8C8"><b>dark grey</b></td>
+<td width="100"><TT>[200,200,200]</TT></td>
+<td width="100">C8C8C8</td></tr>
+
+<tr><td width="100"><font color="#B45AB4"><b>W</b></td>
+<td width="100"><font color="#B45AB4"><b>pink</b></td>
+<td width="100"><TT>[180,90,180]</TT></td>
+<td width="100">B45AB4</td></tr>
+
+<tr><td width="100"><font color="#8282D2"><b>H</b></td>
+<td width="100"><font color="#8282D2"><b>pale blue</b></td>
+<td width="100"><TT>[130,130,210]</TT></td>
+<td width="100">8282D2</td></tr>
+
+<tr><td width="100"><font color="#DC9682"><b>P</b></td>
+<td width="100"><font color="#DC9682"><b>flesh</b></td>
+<td width="100"><TT>[220,150,130]</TT></td>
+<td width="100">DC9682</td></tr>
+</table>
+</blockquote>
+
+
+<h3>Shapley color table</h3>
+
+<blockquote>
+<table width="400" cellpadding=2 cellspacing=0 border=1>
+<tr><td width="100">Amino Acids</td>
+<td width="100">Color Name</td>
+<td width="100">RGB</td>
+<td width="100">Hexadecimal</td></tr>
+
+<tr><td width="100"><font color="#A00042"><b>D, T</b></td>
+<td width="100"><font color="#A00042"><b>dark red</b></td>
+<td width="100"><TT>[160,0,66]</TT></td>
+<td width="100">A00042</td></tr>
+
+<tr><td width="100"><font color="#660000"><b>E</b></td>
+<td width="100"><font color="#660000"><b>red-brown</b></td>
+<td width="100"><TT>[102,0,0]</TT></td>
+<td width="100">660000</td></tr>
+
+<tr><td width="100"><font color="#FFFF70"><b>C</b></td>
+<td width="100"><font color="#FFFF70"><b>bright yellow</b></td>
+<td width="100"><TT>[255,255,112]</TT></td>
+<td width="100">FFFF70</td></tr>
+
+<tr><td width="100"><font color="#B8A042"><b>M, Y</b></td>
+<td width="100"><font color="#B8A042"><b>dark yellow</b></td>
+<td width="100"><TT>[184,160,66]</TT></td>
+<td width="100">B8A042</td></tr>
+
+<tr><td width="100"><font color="#4747B8"><b>K</b></td>
+<td width="100"><font color="#4747B8"><b>blue</b></td>
+<td width="100"><TT>[71,71,184]</TT></td>
+<td width="100">4747B8</td></tr>
+
+<tr><td width="100"><font color="#00007C"><b>R</b></td>
+<td width="100"><font color="#00007C"><b>dark blue</b></td>
+<td width="100"><TT>[0,0,124]</TT></td><td width="100">00007C</td></tr>
+
+<tr><td width="100"><font color="#FF4C4C"><b>S, Q</b></td>
+<td width="100"><font color="#FF4C4C"><b>orange</b></td>
+<td width="100"><TT>[255,76,76]</TT></td>
+<td width="100">FF4C4C</td></tr>
+
+<tr><td width="100"><font color="#534C42"><b>F, P, W</b></td>
+<td width="100"><font color="#534C42"><b>dark grey</b></td>
+<td width="100"><TT>[83,76,66]</TT></td>
+<td width="100">534C42</td></tr>
+
+<tr><td width="100"><font color="#FF7C70"><b>N</b></td>
+<td width="100"><font color="#FF7C70"><b>flesh</b></td>
+<td width="100"><TT>[255,124,112]</TT></td>
+<td width="100">FF7C70</td></tr>
+
+<tr><td width="100"><font color="#EBEBEB"><b>G, V</b></td>
+<td width="100"><font color="#EBEBEB"><b>light grey</b></td>
+<td width="100"><TT>[235,235,235]</TT></td>
+<td width="100">EBEBEB</td></tr>
+
+<tr><td width="100"><font color="#004C00"><b>I</b></td>
+<td width="100"><font color="#004C00"><b>dark green</b></td>
+<td width="100"><TT>[0,76,0]</TT></td>
+<td width="100">004C00</td></tr>
+
+<tr><td width="100"><font color="#455E45"><b>L</b></td>
+<td width="100"><font color="#455E45"><b>grey-green</b></td>
+<td width="100"><TT>[69,94,69]</TT></td>
+<td width="100">455E45</td></tr>
+
+<tr><td width="100"><font color="#8CFF8C"><b>A</b></td>
+<td width="100"><font color="#8CFF8C"><b>light green</b></td>
+<td width="100"><TT>[140,255,140]</TT></td>
+<td width="100">8CFF8C</td></tr>
+
+<tr><td width="100"><font color="#7070FF"><b>H</b></td>
+<td width="100"><font color="#7070FF"><b>pale blue</b></td>
+<td width="100"><TT>[112,112,255]</TT></td>
+<td width="100">7070FF</td></tr>
+</table>
+</blockquote>
+
+<p>
+In the original Shapley scheme, G and V are color-coded as white. Since this
+would render them invisible against a white background, their color has been
+changed to light grey.
+</p>
+
+
+<a name="yaxis"></a><h3>Show Y-axis label</h3>
+
+<p>
+Shows label on the Y-axis of the profile graph.
+</p>
+
+<a name="format"></a><h3>Output format</h3>
+
+<p>
+Composition Profiler supports: 
+<ul>
+<li>Portable Network Graphics (PNG)</li> 
+<li>Portable Document Format (PDF)</li>
+<li>Encapsulated PostScript (EPS)</li>
+</ul>
+</p>
+
+<p>
+Additionally, raw values for bar heights and error bars are displayed
+if plain text (TXT) option is chosen.
+</p>
+
+
+<a name="size"></a><h3>Output size</h3>
+
+<p>
+Height and width of the output image, in pixels, centimeters or 
+inches.
+</p>
+
+
+<a name="resolution"></a><h3>Resolution</h3>
+
+<p>
+Sets up the image resolution. Applicable to bitmaps only (PNG).
+</p>
+
+
+<a name="references"></a><h4>References</h4>
+
+<ul>
+
+<li>Bairoch A, Apweiler R, Wu CH, Barker WC, Boeckmann B, Ferro S,
+Gasteiger E, Huang H, Lopez R, Magrane M, Martin MJ, Natale DA,
+O'Donovan C, Redaschi N, and Yeh LS. (2005) "The Universal Protein
+Resource (UniProt)." <u>Nucleic Acids Research</u> 33:D154-159. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=15608167&query_hl=8&itool=pubmed_docsum"><img
+src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+height="15" border="0"></a></li>
+
+<li>Berman HM, Westbrook J, Feng Z, Gilliland G, Bhat TN, Weissig H,
+Shindyalov IN, and Bourne PE. (2000) "The Protein Data Bank."
+<u>Nucleic Acids Research</u>, 28:235-242. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=10592235&query_hl=8&itool=pubmed_docsum"><img
+src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+height="15" border="0"></a> </li>
+
+<li>Dawson DM. (1972) In <u>The Biochemical Genetics of Man</u>
+(Brock DJH and Mayo O, eds.), Academic Press, New York, 1-38.</li>
+
+<li>Dunker AK, Lawson JD, Brown CJ, Williams RM, Romero P, Oh JS,
+Oldfield CJ, Campen AM, Ratliff CM, Hipps KW et al.
+(2001) "Intrinsically disordered protein." <u>J. Mol. Graph.
+Model.</u>, 19, 26-59. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=11381529&query_hl=8&itool=pubmed_docsum"><img
+src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+height="15" border="0"></a></li>
+
+<li>Eisenberg D, Schwarz E, Komaromy M, and Wall R. (1984) "Analysis of
+membrane and surface protein sequences with the hydrophobic moment
+plot." <u>J. Mol. Biol.</u> 179:125-142. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=
+&query_hl=8&itool=pubmed_docsum"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></li>
+
+<li>Fauchere J-L, and Pliska VE. (1983) "Hydrophobic parameters pi of
+amino acid side chains from partitioning of N-acetyl-amino-acid
+amides." <u>Eur. J. Med. Chem.</u> 18:369-375. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=
+&query_hl=8&itool=pubmed_docsum"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></li>
+
+<li>George RA, and Heringa J. (2003) An analysis of protein domain
+linkers: their classification and role in protein folding. <u>Protein
+Eng.</u> 15:871-879. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=AbstractPlus&list_uids=12538906&query_hl=14"><img
+src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+height="15" border="0"></a></li>
+
+<li>Hogg RV and Craig A. (1994) <u>Introduction to Mathematical
+Statistics</u>, 5th edition, Prentice Hall.</li>
+
+<li>Janin J. (1979) "Surface and inside volumes in globular proteins."
+<u>Nature</u>, 277, 491-492. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=AbstractPlus&list_uids=763335&query_hl=12"><img
+src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+height="15" border="0"></a></li>
+
+<li>Jones S, and Thornton J. (1997) "Analysis of protein-proteins
+interaction sites using surface patches." <u>J. Mol. Biol.</u>
+272:121-132. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=
+&query_hl=8&itool=pubmed_docsum"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></li>
+
+<li>Jones S, and Thornton J. (1996) "Principles of protein-protein
+interactions." <u>Proc. Natl. Acad. Sci. USA</u>, 93:13-20. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=
+&query_hl=8&itool=pubmed_docsum"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></i>
+
+<li>Kyte J, and Doolittle RF. (1982) "A simple method for displaying the
+hydropathic character of a protein." <u>J. Mol. Biol.</u> 157:105-132. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=
+&query_hl=8&itool=pubmed_docsum"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></li> 
+
+<li>Nagano K. (1973) "Local analysis of the mechanism of protein
+folding. I. Prediction of helices, loops, and beta-structures from
+primary structure." <u>J. Mol. Biol.</u> 75:401-420.</li>
+
+<li>Sickmeier M, Hamilton JA, LeGall T, Vacic V, Cortese MS, Tantos A,
+Szabo B, Tompa P, Chen J, Uversky VN, Obradovic Z, and Dunker AK.
+(2007) "DisProt: the Database of Disordered Proteins." <u>Nucleic Acids
+Research</u>. 35:D786-93. <a
+href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=AbstractPlus&list_uids=17145717&query_hl=14"><img
+src="{{ url_for('static', filename='images/pubmed.gif') }}" width="47"
+height="15" border="0"></a></li>
+
+<li>Vihinen M, Torkkila E, and Riikonen P. (1994) "Accuracy of protein
+flexibility predictions." <u>Proteins</u>, 19, 141-149. <a
+href="https://pubmed.ncbi.nlm.nih.gov/8090708/"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></li>
+
+<li>Weisstein EW. "Bonferroni Correction." From <u>MathWorld</u> - A
+Wolfram Web Resource. <a
+href="http://mathworld.wolfram.com/BonferroniCorrection.html">http://mathworld.wolfram.com/BonferroniCorrection.html</a></li>
+
+<li>Zimmerman JM, Eliezer N, and Simha R. (1968) "The characterization
+of amino acid sequences in proteins by statistical methods." <u>J J.
+Theor. Biol.</u> 21:170-201. <a
+href="https://pubmed.ncbi.nlm.nih.gov/5700434/"><img src="{{ url_for
+('static', filename='images/pubmed.gif') }}" width="47" height="15"
+border="0"></a></li>
+
+</ul>
+
+        <hr noshade size="3">
+
+        </td>
+        </tr>
+        </table>
+    </body>
+</html>
